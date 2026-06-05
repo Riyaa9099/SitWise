@@ -6,6 +6,7 @@ import numpy as np
 import mediapipe as mp
 print("MEDIAPIPE FILE:", mp.__file__)
 print("MEDIAPIPE CONTENT:", dir(mp))
+raise Exception("STOP HERE")
 from math import degrees, atan2
 from fastapi.middleware.cors import CORSMiddleware
 import os
