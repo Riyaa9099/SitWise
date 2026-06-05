@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Posture Pal Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--bg);
+      color: #2f2f2f;
+    }
+    .dashboard {
+      max-width: 1000px;
+      margin: auto;
+      padding: 30px 20px;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+    .header h1 {
+      font-size: 2em;
+      color: black;
+      flex: 1 1 100%;
+      text-align: center;
+    }
+    .header img {
+      height: 100px;
+      margin: 10px auto;
+    }
+    .overview {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .card {
+      margin: 10px auto;
+      background-color: rgb(248, 245, 245);
+      border-radius: 20px;
+      padding: 20px;
+      flex: 1 1 280px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+    .progress-circle {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: conic-gradient( #355e57 60%, #ddd 0);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      font-weight: bold;
+      margin-right: 15px;
+    }
+    .progress-content {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .section-title {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+    }
+    .bar-container {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-end;
+      height: 150px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .bar-vertical {
+      width: 30px;
+      background-color: #355e57;
+      border-radius: 5px 5px 0 0;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      transition: height 0.3s ease;
+    }
+    .bar-label-vertical {
+      text-align: center;
+      margin-top: 8px;
+    }
+    .bar-column {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .bar-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 6px 0;
+      width: 100%;
+      flex-wrap: wrap;
+    }
+    .bar-label {
+      flex: 0 0 90px;
+    }
+    .bar-horizontal {
+      height: 10px;
+      background-color:  #355e57;
+      border-radius: 5px;
+      margin: 0 10px;
+      flex-grow: 1;
+    }
+    @media (max-width: 600px) {
+      .progress-content {
+        flex-direction: column;
+        align-items: center;
+      }
+      .progress-circle {
+        margin-bottom: 10px;
+      }
+      .header h1 {
+        font-size: 1.5em;
+      }
+      .header img {
+        height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+    <div class="header">
+      <h1>Welcome, SitWise User!</h1>
+      <img src="./assets/admi-removebg-preview.png" alt="User Icon">
+    </div>
+
+    <div class="overview">
+      <div class="card">
+        <div class="section-title"><b>Progress</b></div>
+        <div class="progress-content">
+          <div class="progress-circle">60%</div>
+          <div>60% good posture<br>Beginner Sitter</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><b>Monitoring ⏰</b></div>
+        <div style="font-size: 1.5em; font-weight: bold;">00:01:08</div>
+      </div>
+    </div>
+
+    <div class="overview">
+      <div class="card">
+        <div class="section-title"><b>Progress this week</b></div>
+        <div class="bar-container">
+          <div class="bar-column"><div class="bar-vertical" style="height: 83px;"></div><div class="bar-label-vertical">Mon</div></div>
+          <div class="bar-column"><div class="bar-vertical" style="height: 90px;"></div><div class="bar-label-vertical">Tue</div></div>
+          <div class="bar-column"><div class="bar-vertical" style="height: 75px;"></div><div class="bar-label-vertical">Wed</div></div>
+          <div class="bar-column"><div class="bar-vertical" style="height: 105px;"></div><div class="bar-label-vertical">Thu</div></div>
+          <div class="bar-column"><div class="bar-vertical" style="height: 97px;"></div><div class="bar-label-vertical">Sat</div></div>
+          <div class="bar-column"><div class="bar-vertical" style="height: 112px;"></div><div class="bar-label-vertical">Sun</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="section-title"><b>Usage this week</b></div>
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <div class="bar-row"><div class="bar-label">Sat 20 Apr</div><div class="bar-horizontal" style="width: 20%;"></div><div>20 min</div></div>
+          <div class="bar-row"><div class="bar-label">Sun 21 Apr</div><div class="bar-horizontal" style="width: 10%;"></div><div>10 min</div></div>
+          <div class="bar-row"><div class="bar-label">Mon 22 Apr</div><div class="bar-horizontal" style="width: 25%;"></div><div>25 min</div></div>
+          <div class="bar-row"><div class="bar-label">Tue 23 Apr</div><div class="bar-horizontal" style="width: 30%;"></div><div>30 min</div></div>
+          <div class="bar-row"><div class="bar-label">Wed 24 Apr</div><div class="bar-horizontal" style="width: 35%;"></div><div>35 min</div></div>
+          <div class="bar-row"><div class="bar-label">Thu 25 Apr</div><div class="bar-horizontal" style="width: 40%;"></div><div>40 min</div></div>
+          <div class="bar-row"><div class="bar-label">Fri 26 Apr</div><div class="bar-horizontal" style="width: 25%;"></div><div>25 min</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>
