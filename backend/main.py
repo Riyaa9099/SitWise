@@ -4,19 +4,22 @@ from fastapi.responses import FileResponse
 import cv2
 import numpy as np
 
-# MediaPipe Import Fix
 try:
     import mediapipe as mp
 
-    if hasattr(mp, "solutions"):
-        print("Using mp.solutions")
-    else:
+    if not hasattr(mp, "solutions"):
         from mediapipe.python import solutions
         mp.solutions = solutions
-        print("Using mediapipe.python.solutions")
 
 except Exception as e:
     raise Exception(f"MEDIAPIPE IMPORT FAILED: {e}")
+
+from math import degrees, atan2
+from fastapi.middleware.cors import CORSMiddleware
+import os
+from io import BytesIO
+from PIL import Image
+from pydantic import BaseModel
 
 from math import degrees, atan2
 from fastapi.middleware.cors import CORSMiddleware
