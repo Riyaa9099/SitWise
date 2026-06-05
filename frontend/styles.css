@@ -1,0 +1,210 @@
+:root {
+    --primary-color: #00bfa6;
+    --accent-color: #3f51b5;
+    --warning-color: #ff7043;
+    --danger-color: #f44336;
+    --background-color: #eef2f3;
+    --card-background: rgba(255, 255, 255, 0.65);
+    --text-color: #2e2e2e;
+    --shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    --gradient-start: #00bfa6;
+    --gradient-end: #3f51b5;
+    --good-shadow: rgba(0, 191, 166, 0.5);
+    --bad-shadow: rgba(244, 67, 54, 0.5);
+    --neutral-shadow: rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #eef2f3, #e0eafc);
+    color: var(--text-color);
+    line-height: 1.6;
+    padding: 20px;
+    min-height: 100vh;
+    position: relative;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(15px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+}
+
+header {
+    text-align: center;
+    padding-bottom: 2rem;
+    position: relative;
+}
+
+header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(to right, var(--gradient-start), var(--gradient-end));
+    border-radius: 2px;
+}
+
+h1 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    font-size: 1.2rem;
+    color: #555;
+}
+
+.card {
+    background: var(--card-background);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.video-container,
+.status-container,
+.config-container {
+    background: var(--card-background);
+    backdrop-filter: blur(10px);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 1.5rem;
+}
+
+.video-container {
+    position: relative;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+    border: 2px solid var(--accent-color);
+}
+
+.video-container.good-posture-shadow {
+    box-shadow: 0 0 20px var(--good-shadow);
+}
+
+.video-container.bad-posture-shadow {
+    box-shadow: 0 0 20px var(--bad-shadow);
+}
+
+.video-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.status-message {
+    font-size: 1.6rem;
+    font-weight: 600;
+    padding: 1rem;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.good-posture {
+    color: #009688;
+    background-color: rgba(0, 150, 136, 0.15);
+}
+
+.bad-posture {
+    color: #f44336;
+    background-color: rgba(244, 67, 54, 0.15);
+}
+
+.metric {
+    font-size: 1.1rem;
+    padding: 0.6rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.5rem;
+}
+
+.start-button,
+.config-button,
+.alert-button {
+    padding: 1rem 2rem;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--gradient-start), var(--gradient-end));
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 6px 16px rgba(0, 191, 166, 0.2);
+}
+
+.start-button:hover,
+.config-button:hover,
+.alert-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(0, 191, 166, 0.25);
+}
+
+footer {
+    text-align: center;
+    padding: 2rem 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+footer a {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+/* Theme & dark mode enhancements */
+body.dark-mode {
+    background: linear-gradient(to bottom right, #1a1a1a, #2b2b2b);
+    color: #f0f0f0;
+}
+
+body.dark-mode .card,
+body.dark-mode .container,
+body.dark-mode .status-container,
+body.dark-mode .config-container,
+body.dark-mode .video-container {
+    background: rgba(40, 40, 40, 0.6);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    color: #f0f0f0;
+}
+
+body.dark-mode .start-button,
+body.dark-mode .config-button,
+body.dark-mode .alert-button {
+    background: linear-gradient(135deg, #26c6da, #00acc1);
+    color: white;
+}
+
+body.dark-mode .config-button.secondary,
+body.dark-mode .alert-button.disabled {
+    background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
+    color: #ccc;
+}
+
+/* Additional classes for responsiveness or enhancements can be layered on as needed */
