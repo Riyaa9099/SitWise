@@ -3,10 +3,20 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
 import cv2
 import numpy as np
-import mediapipe as mp
 
-# DEBUG
-raise Exception(f"MEDIAPIPE PATH => {mp.__file__}")
+# MediaPipe Import Fix
+try:
+    import mediapipe as mp
+
+    if hasattr(mp, "solutions"):
+        print("Using mp.solutions")
+    else:
+        from mediapipe.python import solutions
+        mp.solutions = solutions
+        print("Using mediapipe.python.solutions")
+
+except Exception as e:
+    raise Exception(f"MEDIAPIPE IMPORT FAILED: {e}")
 
 from math import degrees, atan2
 from fastapi.middleware.cors import CORSMiddleware
