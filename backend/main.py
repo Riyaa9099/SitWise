@@ -4,6 +4,8 @@ from fastapi.responses import FileResponse
 import cv2
 import numpy as np
 import mediapipe as mp
+print("MEDIAPIPE FILE:", mp.__file__)
+print("MEDIAPIPE CONTENT:", dir(mp))
 from math import degrees, atan2
 from fastapi.middleware.cors import CORSMiddleware
 import os
