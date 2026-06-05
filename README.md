@@ -97,7 +97,7 @@ uvicorn main:app --reload
 Server will start at:
 
 ```text
-http://127.0.0.1:8000/
+http://127.0.0.1:8000
 ```
 
 Open the URL in your browser.
