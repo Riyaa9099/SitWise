@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Posture Detection</title>
+ 
+
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --accent-teal: #00bfa6;
+      --accent-indigo: #5e60ce;
+      --accent-coral: #ff6b6b;
+      --bg-glass: rgba(255, 255, 255, 0.15);
+      --glass-border: rgba(255, 255, 255, 0.25);
+      --glass-shadow: rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+   
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      background-color: #f4f3ef;
+    }
+
+    .main-layout {
+      display: flex;
+      width: 100%;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 250px;
+      background: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+      border-right: 1px solid var(--glass-border);
+      box-shadow: 4px 0 10px var(--glass-shadow);
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background-color: #355e57;
+      color: white;
+    }
+
+    .profile {
+      text-align: center;
+    }
+
+    .avatar {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin-bottom: 0.5rem;
+    }
+
+    .username {
+      font-weight: 600;
+    }
+
+    .nav-links button,
+    .bottom-links button {
+      background: none;
+      border: none;
+      padding: 0.75rem;
+      width: 100%;
+      text-align: left;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 0.5rem;
+      transition: background 0.2s ease;
+      color:white;
+    }
+
+    .nav-links button:hover,
+    .bottom-links button:hover {
+      background: var(--accent-teal);
+      color: black;
+    }
+
+    /* Main content */
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem;
+    }
+
+    .top-bar {
+      margin-bottom: 2rem;
+    }
+
+    .top-bar h1 {
+      font-size: 2rem;
+      color: var(--accent-indigo);
+    }
+
+    .subtitle {
+      font-size: 1rem;
+      color: #666;
+    }
+
+    .content-area {
+      display: grid;
+      grid-template-columns: 2fr 1.2fr;
+      gap: 2rem;
+    }
+
+    .video-area,
+    .status-panel,
+    .config-panel {
+      background: var(--bg-glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      border-radius: 1rem;
+      box-shadow: 0 8px 24px var(--glass-shadow);
+      padding: 1.5rem;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .video-area:hover,
+    .status-panel:hover,
+    .config-panel:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.25);
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      height: 450px; /* Updated height */
+      background: #000;
+      border-radius: 1rem;
+      overflow: hidden;
+    }
+
+    video, canvas {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-overlay {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+      font-size: 1rem;
+    }
+
+    .primary-btn {
+      margin-top: 1rem;
+      background: var(--accent-coral);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-size: 1rem;
+      transition: background 0.2s;
+    }
+
+    .primary-btn:hover {
+      background: #ff5252;
+    }
+
+    .settings-area {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .status-panel h2,
+    .config-panel h2 {
+      margin-bottom: 1rem;
+      color: var(--accent-indigo);
+    }
+
+    .metric {
+      margin-top: 0.5rem;
+      font-weight: 500;
+    }
+
+    .alert-button {
+      margin-top: 1rem;
+      background: var(--accent-teal);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .alert-button:hover {
+      background: #00a392;
+    }
+
+    .config-panel label {
+      display: block;
+      margin-bottom: 1rem;
+    }
+
+    .config-panel input {
+      margin: 0 0.5rem;
+      padding: 0.25rem;
+      width: 60px;
+      border: 1px solid #ccc;
+      border-radius: 0.5rem;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .config-button {
+      background: var(--accent-indigo);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .config-button.secondary {
+      background: #888;
+    }
+
+    .config-button:hover {
+      opacity: 0.85;
+    }
+
+    .footer {
+      margin-top: auto;
+      text-align: center;
+      font-size: 0.9rem;
+      color: #444;
+    }
+
+    .footer a {
+      color: var(--accent-coral);
+      text-decoration: none;
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    /* Dark mode toggle */
+    .dark-mode {
+      background: linear-gradient(135deg, #121212, #1e1e2f);
+      color: #eee;
+    }
+
+    .dark-mode .main-content {
+      color: #eee;
+    }
+
+    .dark-mode .sidebar {
+      background: rgba(0, 0, 0, 0.3);
+    }
+
+    .dark-mode .video-area,
+    .dark-mode .status-panel,
+    .dark-mode .config-panel {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <div class="main-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="profile">
+        <img src="\assets\admi-removebg-preview.png" alt="User Avatar" class="avatar" />
+        <p class="username">Welcome</p>
+      </div>
+      <nav class="nav-links">
+        <button onclick="location.href='dashboard.html'">Dashboard</button>
+        <button>Settings</button>
+        <button>Logs</button>
+      </nav>
+      <div class="bottom-links">
+        <button id="themeToggle">🌓 Theme</button>
+        <!-- Logout button -->
+<button class="logout" id="logoutbtn" >
+  Logout
+</button>
+
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="top-bar">
+        <h1>Posture Detection</h1>
+        <p class="subtitle">Monitor and improve your posture in real time</p>
+      </header>
+
+      <section class="content-area">
+        <!-- Left: Video Feed -->
+        <div class="video-area">
+          <div class="video-container">
+            <video id="video" autoplay muted></video>
+            <canvas id="canvas"></canvas>
+            <canvas id="pose-canvas"></canvas>
+            <div class="camera-overlay">
+              <div class="overlay-content">
+                <span class="camera-icon">📷</span>
+                <p class="camera-text">Camera is not active</p>
+              </div>
+            </div>
+          </div>
+          <div class="button-group">
+            <button id="startBtn" class="primary-btn">▶ Start Detection</button>
+            <button id="stopBtn" class="primary-btn" style="background: #999;">⏹ Stop Detection</button>
+          </div>
+          
+        </div>
+
+        <!-- Right: Status and Settings -->
+        <div class="settings-area">
+          <div class="status-panel">
+            <h2>Status</h2>
+            <p id="status" class="status-message">Status: Waiting...</p>
+            <p id="angle" class="metric">Neck Angle: --</p>
+            <p id="timer" class="metric hidden">Bad Posture Time: 0s</p>
+            <button id="toggleAlert" class="alert-button">
+              <span class="alert-icon">🔔</span> Alerts Enabled
+            </button>
+          </div>
+
+          <div class="config-panel">
+            <h2>Detection Settings ⚙️</h2>
+            <label>Right Side Angle:
+              <input type="number" id="rightMinAngle" value="-100" max="0"> -
+              <input type="number" id="rightMaxAngle" value="-65" max="0"> degrees
+            </label>
+            <label>Left Side Angle:
+              <input type="number" id="leftMinAngle" value="65" min="0"> -
+              <input type="number" id="leftMaxAngle" value="100" min="0"> degrees
+            </label>
+            <label>Alert Interval:
+              <input type="number" id="alertInterval" value="10" min="1"> seconds
+            </label>
+            <div class="button-group">
+              <button id="saveConfig" class="config-button">💾 Save</button>
+              <button id="resetConfig" class="config-button secondary">♻️ Reset</button>
+            </div>
+          </div>
+         
+          
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>Built with ❤️ by <a href="#" target="_blank">SitWise</a></p>
+      </footer>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    document.getElementById("themeToggle").addEventListener("click", () => {
+      document.body.classList.toggle("dark-mode");
+    });
+
+    const video = document.getElementById("video");
+    const stopBtn = document.getElementById("stopBtn");
+  
+    stopBtn.addEventListener("click", () => {
+      location.reload();
+    });
+  </script>
+  
+
+  <script
+  async
+  crossorigin="anonymous"
+  data-clerk-publishable-key="pk_test_dGlkeS1vc3ByZXktNDIuY2xlcmsuYWNjb3VudHMuZGV2JA"
+  src="https://model-wahoo-94.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+  type="text/javascript">
+</script>
+
+<script>
+  window.addEventListener('load', async () => {
+    try {
+      await Clerk.load();
+
+      if (!Clerk.user) {
+        window.location.href = 'login.html'; // or index.html depending on your flow
+        return;
+      }
+
+      const logoutBtn = document.getElementById('logoutbtn');
+      logoutBtn.addEventListener('click', async () => {
+        try {
+          await Clerk.signOut();
+          window.location.href = 'index.html'; // ✅ Update to redirect correctly
+        } catch (err) {
+          console.error('Logout failed:', err);
+          alert('Something went wrong while logging out.');
+        }
+      });
+    } catch (err) {
+      console.error('Clerk initialization error:', err);
+    }
+  });
+</script>
+
+  
+</body>
+</html>
