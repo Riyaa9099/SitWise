@@ -49,7 +49,7 @@ const toggleAlertBtn =
 // File must be:
 // frontend/sounds/soft-alert.mp3
 
-const SOUND_URL = '/sounds/soft-alert.mp3';
+const SOUND_URL = '/sounds/soft-alert2.wav';
 
 
 // ======================================================
