@@ -42,7 +42,8 @@ const toggleAlertBtn = document.getElementById('toggleAlert');
 // ALERT SOUND
 // ======================================================
 
-const alertSound = new Audio('sounds/soft-alert2.wav');
+// File is inside frontend/sounds/soft-alert2.wav
+const alertSound = new Audio('/sounds/soft-alert2.wav?v=2');
 
 alertSound.preload = 'auto';
 
@@ -362,7 +363,7 @@ function drawPoseMarkers(landmarks) {
 
 
     landmarks.forEach(
-        (landmark, index) => {
+        (landmark) => {
 
             if (landmark.visibility > 0.5) {
 
@@ -438,6 +439,8 @@ function drawConnections(
 
 
             if (
+                start &&
+                end &&
                 start.visibility > 0.5 &&
                 end.visibility > 0.5
             ) {
@@ -594,7 +597,7 @@ document
                 'Starting...';
 
 
-            // Enable audio after user clicks
+            // Enable audio after user click
             try {
 
                 await alertSound.play();
