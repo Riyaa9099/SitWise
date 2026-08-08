@@ -43,9 +43,10 @@ const toggleAlertBtn = document.getElementById('toggleAlert');
 // ======================================================
 
 // File is inside frontend/sounds/soft-alert2.wav
-const alertSound = new Audio('/sounds/soft-alert.mp3?v=3');
+const alertSound = new Audio('/sounds/soft-alert.mp3');
 
 alertSound.preload = 'auto';
+alertSound.volume = 1.0;
 
 
 // ======================================================
@@ -306,30 +307,22 @@ function updateUI(data) {
 function playAlert() {
 
     if (!alertsEnabled) {
+        console.log("Alerts are disabled");
         return;
     }
 
+    console.log("Trying to play alert sound...");
 
     alertSound.currentTime = 0;
 
-
     alertSound.play()
         .then(() => {
-
-            console.log(
-                'Alert sound played successfully'
-            );
-
+            console.log("Alert sound played successfully");
         })
         .catch((error) => {
-
-            console.error(
-                'Error playing alert sound:',
-                error
-            );
+            console.error("Alert sound error:", error);
         });
 }
-
 
 // ======================================================
 // POSE MARKERS
