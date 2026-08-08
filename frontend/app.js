@@ -42,8 +42,9 @@ const toggleAlertBtn = document.getElementById('toggleAlert');
 // ALERT SOUND
 // ======================================================
 
-// File is inside frontend/sounds/soft-alert2.wav
-const alertSound = new Audio('/sounds/soft-alert.mp3');
+// ALERT SOUND
+
+const alertSound = new Audio('/sounds/soft-alert.mp3?v=5');
 
 alertSound.preload = 'auto';
 alertSound.volume = 1.0;
