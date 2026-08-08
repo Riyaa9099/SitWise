@@ -39,13 +39,11 @@ const toggleAlertBtn = document.getElementById('toggleAlert');
 
 
 // ======================================================
-// 🔊 ALERT SOUND
+// ALERT SOUND
 // ======================================================
 
-// Sound file
-const alertSound = new Audio('sounds/soft-alert2.mp3');
+const alertSound = new Audio('sounds/soft-alert2.wav');
 
-// Browser ko pehle se sound load karne bol rahe hain
 alertSound.preload = 'auto';
 
 
@@ -163,7 +161,6 @@ function updateUI(data) {
         document.querySelector('.video-container');
 
 
-    // Error from backend
     if (data.error) {
 
         statusElement.textContent =
@@ -179,7 +176,6 @@ function updateUI(data) {
     }
 
 
-    // Update status
     statusElement.textContent =
         data.status;
 
@@ -190,7 +186,6 @@ function updateUI(data) {
             : 'bad-posture');
 
 
-    // Update video shadow
     videoContainer.className =
         'video-container ' +
         (data.is_good
@@ -245,8 +240,6 @@ function updateUI(data) {
 
     if (!data.is_good) {
 
-
-        // Start timer
         if (!badPostureStartTime) {
 
             badPostureStartTime =
@@ -254,7 +247,6 @@ function updateUI(data) {
         }
 
 
-        // Calculate bad posture duration
         const duration =
             Math.floor(
                 (Date.now() - badPostureStartTime) / 1000
@@ -271,7 +263,7 @@ function updateUI(data) {
 
 
         // ==================================================
-        // 🔊 PLAY ALERT AFTER SELECTED INTERVAL
+        // PLAY ALERT AFTER SELECTED INTERVAL
         // ==================================================
 
         if (
@@ -285,10 +277,8 @@ function updateUI(data) {
                 config.alertInterval
             ) {
 
-                // Play sound
                 playAlert();
 
-                // Remember alert time
                 lastAlertTime =
                     Date.now();
             }
@@ -297,11 +287,8 @@ function updateUI(data) {
 
     } else {
 
-
-        // Good posture
         badPostureStartTime = null;
 
-        // Reset alert timer
         lastAlertTime = null;
 
         timerElement.classList.add(
@@ -312,18 +299,16 @@ function updateUI(data) {
 
 
 // ======================================================
-// 🔊 PLAY ALERT SOUND
+// PLAY ALERT SOUND
 // ======================================================
 
 function playAlert() {
 
-    // If alerts are disabled, don't play sound
     if (!alertsEnabled) {
         return;
     }
 
 
-    // Start sound from beginning
     alertSound.currentTime = 0;
 
 
@@ -331,14 +316,14 @@ function playAlert() {
         .then(() => {
 
             console.log(
-                '🔊 Alert sound played successfully'
+                'Alert sound played successfully'
             );
 
         })
         .catch((error) => {
 
             console.error(
-                '❌ Error playing alert sound:',
+                'Error playing alert sound:',
                 error
             );
         });
@@ -361,7 +346,6 @@ function drawPoseMarkers(landmarks) {
         document.getElementById('video');
 
 
-    // Set canvas size
     canvas.width =
         video.videoWidth;
 
@@ -369,7 +353,6 @@ function drawPoseMarkers(landmarks) {
         video.videoHeight;
 
 
-    // Clear canvas
     ctx.clearRect(
         0,
         0,
@@ -378,7 +361,6 @@ function drawPoseMarkers(landmarks) {
     );
 
 
-    // Draw landmarks
     landmarks.forEach(
         (landmark, index) => {
 
@@ -403,7 +385,6 @@ function drawPoseMarkers(landmarks) {
     );
 
 
-    // Draw connections
     drawConnections(
         ctx,
         landmarks,
@@ -426,21 +407,16 @@ function drawConnections(
 
     const connections = [
 
-        // Shoulders
         [11, 12],
 
-        // Right arm
         [11, 13],
         [13, 15],
 
-        // Left arm
         [12, 14],
         [14, 16],
 
-        // Right ear to shoulder
         [8, 12],
 
-        // Left ear to shoulder
         [7, 11]
     ];
 
@@ -618,43 +594,31 @@ document
                 'Starting...';
 
 
-            // ==========================================
-            // 🔊 ENABLE AUDIO
-            // ==========================================
-
+            // Enable audio after user clicks
             try {
-
-                // Because this happens after
-                // user's button click,
-                // Chrome allows the audio.
 
                 await alertSound.play();
 
-
-                // Immediately stop it
                 alertSound.pause();
 
                 alertSound.currentTime = 0;
 
-
                 console.log(
-                    '🔊 Alert sound enabled'
+                    'Alert sound enabled'
                 );
 
             } catch (error) {
 
                 console.error(
-                    '❌ Could not enable audio:',
+                    'Could not enable audio:',
                     error
                 );
             }
 
 
-            // Start camera
             await startWebcam();
 
 
-            // Send frame every 1 second
             setInterval(
                 sendFrame,
                 1000
@@ -861,9 +825,9 @@ toggleAlertBtn.addEventListener(
         toggleAlertBtn.innerHTML =
             alertsEnabled
 
-                ? '<span class="alert-icon">🔔</span> Alerts Enabled'
+                ? '<span class="alert-icon"></span> Alerts Enabled'
 
-                : '<span class="alert-icon">🔕</span> Alerts Disabled';
+                : '<span class="alert-icon"></span> Alerts Disabled';
     }
 );
 
