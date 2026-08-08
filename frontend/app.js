@@ -18,9 +18,9 @@ function loadConfig() {
 function saveConfigToStorage() {
     try {
         localStorage.setItem('postureConfig', JSON.stringify(config));
-        console.log('Configuration saved to storage');
+        console.log('Configuration saved');
     } catch (e) {
-        console.error('Error saving config to storage:', e);
+        console.error('Error saving config:', e);
     }
 }
 
@@ -32,24 +32,100 @@ function saveConfigToStorage() {
 let badPostureStartTime = null;
 let lastAlertTime = null;
 
-const cameraOverlay = document.querySelector('.camera-overlay');
-
 let alertsEnabled = true;
 
-const toggleAlertBtn = document.getElementById('toggleAlert');
+const cameraOverlay =
+    document.querySelector('.camera-overlay');
+
+const toggleAlertBtn =
+    document.getElementById('toggleAlert');
 
 
 // ======================================================
 // ALERT SOUND
 // ======================================================
 
-// Make sure this file exists:
+// IMPORTANT:
+// File must be:
 // frontend/sounds/soft-alert.mp3
 
-const alertSound = new Audio('/sounds/soft-alert.mp3?v=5');
+const SOUND_URL = '/sounds/soft-alert.mp3';
 
-alertSound.preload = 'auto';
-alertSound.volume = 1.0;
+
+// ======================================================
+// TEST / UNLOCK AUDIO
+// ======================================================
+
+function unlockAudio() {
+
+    const audio = new Audio(SOUND_URL);
+
+    audio.volume = 0.01;
+
+    audio.muted = true;
+
+    audio.play()
+        .then(() => {
+
+            audio.pause();
+            audio.currentTime = 0;
+            audio.muted = false;
+
+            console.log('Audio unlocked successfully');
+
+        })
+        .catch((error) => {
+
+            console.error(
+                'Audio unlock failed:',
+                error
+            );
+
+        });
+}
+
+
+// ======================================================
+// PLAY ALERT SOUND
+// ======================================================
+
+function playAlert() {
+
+    if (!alertsEnabled) {
+
+        console.log('Alerts are disabled');
+
+        return;
+    }
+
+
+    console.log('Trying to play alert sound...');
+
+
+    const audio = new Audio(SOUND_URL);
+
+    audio.volume = 1.0;
+
+    audio.preload = 'auto';
+
+
+    audio.play()
+        .then(() => {
+
+            console.log(
+                'Alert sound played successfully'
+            );
+
+        })
+        .catch((error) => {
+
+            console.error(
+                'Alert sound error:',
+                error
+            );
+
+        });
+}
 
 
 // ======================================================
@@ -58,15 +134,20 @@ alertSound.volume = 1.0;
 
 async function startWebcam() {
 
-    const video = document.getElementById('video');
+    const video =
+        document.getElementById('video');
+
 
     try {
 
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: true
-        });
+        const stream =
+            await navigator.mediaDevices.getUserMedia({
+                video: true
+            });
+
 
         video.srcObject = stream;
+
 
         video.onloadedmetadata = () => {
 
@@ -74,11 +155,17 @@ async function startWebcam() {
 
         };
 
+
     } catch (error) {
 
-        console.error('Error accessing webcam:', error);
+        console.error(
+            'Error accessing webcam:',
+            error
+        );
 
-        cameraOverlay.textContent = 'Error accessing camera';
+
+        cameraOverlay.textContent =
+            'Error accessing camera';
 
     }
 }
@@ -90,15 +177,34 @@ async function startWebcam() {
 
 async function sendFrame() {
 
-    const video = document.getElementById('video');
+    const video =
+        document.getElementById('video');
 
-    const canvas = document.getElementById('canvas');
+    const canvas =
+        document.getElementById('canvas');
 
-    const context = canvas.getContext('2d');
+    const context =
+        canvas.getContext('2d');
 
 
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
+    if (
+        !video.videoWidth ||
+        !video.videoHeight
+    ) {
+
+        console.log(
+            'Camera is not ready yet'
+        );
+
+        return;
+    }
+
+
+    canvas.width =
+        video.videoWidth;
+
+    canvas.height =
+        video.videoHeight;
 
 
     context.drawImage(
@@ -110,12 +216,17 @@ async function sendFrame() {
     );
 
 
-    const frame = canvas.toDataURL('image/jpeg');
+    const frame =
+        canvas.toDataURL('image/jpeg');
 
-    const blob = await (await fetch(frame)).blob();
+
+    const blob =
+        await (await fetch(frame)).blob();
 
 
-    const formData = new FormData();
+    const formData =
+        new FormData();
+
 
     formData.append(
         'file',
@@ -126,18 +237,22 @@ async function sendFrame() {
 
     try {
 
-        const response = await fetch(
-            '/api/process-image',
-            {
-                method: 'POST',
-                body: formData
-            }
-        );
+        const response =
+            await fetch(
+                '/api/process-image',
+                {
+                    method: 'POST',
+                    body: formData
+                }
+            );
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
+
 
         updateUI(data);
+
 
     } catch (error) {
 
@@ -169,6 +284,10 @@ function updateUI(data) {
         document.querySelector('.video-container');
 
 
+    // ==================================================
+    // ERROR
+    // ==================================================
+
     if (data.error) {
 
         statusElement.textContent =
@@ -184,8 +303,13 @@ function updateUI(data) {
     }
 
 
+    // ==================================================
+    // STATUS
+    // ==================================================
+
     statusElement.textContent =
         data.status;
+
 
     statusElement.className =
         'status-message ' +
@@ -209,7 +333,8 @@ function updateUI(data) {
     // DISPLAY ANGLES
     // ==================================================
 
-    let angleText = 'Neck Angles: ';
+    let angleText =
+        'Neck Angles: ';
 
 
     if (
@@ -232,9 +357,11 @@ function updateUI(data) {
             data.angles.right !== undefined
         ) {
 
-            angleText += ' | ';
+            angleText +=
+                ' | ';
 
         }
+
 
         angleText +=
             `Left: ${data.angles.left.toFixed(2)}°`;
@@ -265,10 +392,17 @@ function updateUI(data) {
 
     if (!data.is_good) {
 
+
+        // Start bad posture timer
+
         if (!badPostureStartTime) {
 
             badPostureStartTime =
                 Date.now();
+
+            console.log(
+                'Bad posture timer started'
+            );
 
         }
 
@@ -292,26 +426,60 @@ function updateUI(data) {
 
 
         // ==================================================
-        // PLAY ALERT AFTER SELECTED INTERVAL
+        // CHECK ALERT INTERVAL
         // ==================================================
 
         if (
             config &&
-            config.alertInterval &&
-            duration >=
-            config.alertInterval / 1000
+            config.alertInterval > 0
         ) {
 
+
+            const alertInterval =
+                config.alertInterval;
+
+
+            // First alert
+
             if (
-                !lastAlertTime ||
+                !lastAlertTime &&
+                (
+                    Date.now() -
+                    badPostureStartTime
+                ) >= alertInterval
+            ) {
+
+                console.log(
+                    'Alert interval reached'
+                );
+
+
+                playAlert();
+
+
+                lastAlertTime =
+                    Date.now();
+
+            }
+
+
+            // Next alerts
+
+            else if (
+                lastAlertTime &&
                 (
                     Date.now() -
                     lastAlertTime
-                ) >=
-                config.alertInterval
+                ) >= alertInterval
             ) {
 
+                console.log(
+                    'Next alert interval reached'
+                );
+
+
                 playAlert();
+
 
                 lastAlertTime =
                     Date.now();
@@ -320,60 +488,26 @@ function updateUI(data) {
 
         }
 
+
     } else {
 
-        badPostureStartTime = null;
 
-        lastAlertTime = null;
+        // ==================================================
+        // GOOD POSTURE
+        // ==================================================
+
+        badPostureStartTime =
+            null;
+
+        lastAlertTime =
+            null;
+
 
         timerElement.classList.add(
             'hidden'
         );
 
     }
-}
-
-
-// ======================================================
-// PLAY ALERT SOUND
-// ======================================================
-
-function playAlert() {
-
-    if (!alertsEnabled) {
-
-        console.log(
-            'Alerts are disabled'
-        );
-
-        return;
-    }
-
-
-    console.log(
-        'Trying to play alert sound...'
-    );
-
-
-    alertSound.currentTime = 0;
-
-
-    alertSound.play()
-        .then(() => {
-
-            console.log(
-                'Alert sound played successfully'
-            );
-
-        })
-        .catch((error) => {
-
-            console.error(
-                'Alert sound error:',
-                error
-            );
-
-        });
 }
 
 
@@ -411,9 +545,12 @@ function drawPoseMarkers(landmarks) {
     landmarks.forEach(
         (landmark) => {
 
-            if (landmark.visibility > 0.5) {
+            if (
+                landmark.visibility > 0.5
+            ) {
 
                 ctx.beginPath();
+
 
                 ctx.arc(
                     landmark.x * canvas.width,
@@ -423,8 +560,10 @@ function drawPoseMarkers(landmarks) {
                     2 * Math.PI
                 );
 
+
                 ctx.fillStyle =
                     '#00FF00';
+
 
                 ctx.fill();
 
@@ -474,7 +613,8 @@ function drawConnections(
     ctx.strokeStyle =
         '#00FF00';
 
-    ctx.lineWidth = 2;
+    ctx.lineWidth =
+        2;
 
 
     connections.forEach(
@@ -496,15 +636,18 @@ function drawConnections(
 
                 ctx.beginPath();
 
+
                 ctx.moveTo(
                     start.x * width,
                     start.y * height
                 );
 
+
                 ctx.lineTo(
                     end.x * width,
                     end.y * height
                 );
+
 
                 ctx.stroke();
 
@@ -524,6 +667,7 @@ document
     .addEventListener(
         'click',
         () => {
+
 
             const rightMinAngle =
                 parseInt(
@@ -565,6 +709,8 @@ document
                 ) * 1000;
 
 
+            // Validate angles
+
             if (
                 rightMinAngle >= rightMaxAngle ||
                 leftMinAngle >= leftMaxAngle
@@ -579,8 +725,8 @@ document
 
 
             if (
-                rightMaxAngle > 0 ||
-                rightMinAngle > 0
+                rightMinAngle > 0 ||
+                rightMaxAngle > 0
             ) {
 
                 alert(
@@ -592,8 +738,8 @@ document
 
 
             if (
-                leftMaxAngle < 0 ||
-                leftMinAngle < 0
+                leftMinAngle < 0 ||
+                leftMaxAngle < 0
             ) {
 
                 alert(
@@ -604,23 +750,46 @@ document
             }
 
 
-            config.rightMinAngle =
-                rightMinAngle;
+            if (
+                !alertInterval ||
+                alertInterval <= 0
+            ) {
 
-            config.rightMaxAngle =
-                rightMaxAngle;
+                alert(
+                    'Alert interval must be greater than 0'
+                );
 
-            config.leftMinAngle =
-                leftMinAngle;
+                return;
+            }
 
-            config.leftMaxAngle =
-                leftMaxAngle;
 
-            config.alertInterval =
-                alertInterval;
+            config = {
+
+                rightMinAngle:
+                    rightMinAngle,
+
+                rightMaxAngle:
+                    rightMaxAngle,
+
+                leftMinAngle:
+                    leftMinAngle,
+
+                leftMaxAngle:
+                    leftMaxAngle,
+
+                alertInterval:
+                    alertInterval
+
+            };
 
 
             saveConfigToStorage();
+
+
+            console.log(
+                'Configuration saved:',
+                config
+            );
 
         }
     );
@@ -636,37 +805,25 @@ document
         'click',
         async () => {
 
+
             const button =
                 document.getElementById(
                     'startBtn'
                 );
 
 
-            button.disabled = true;
+            button.disabled =
+                true;
+
 
             button.textContent =
                 'Starting...';
 
 
-            // Unlock audio after user clicks Start
-            try {
+            // IMPORTANT:
+            // This happens directly because of user click.
 
-                alertSound.currentTime = 0;
-
-                await alertSound.play();
-
-                console.log(
-                    'Alert sound enabled'
-                );
-
-            } catch (error) {
-
-                console.error(
-                    'Could not enable audio:',
-                    error
-                );
-
-            }
+            unlockAudio();
 
 
             await startWebcam();
@@ -681,6 +838,11 @@ document
             button.textContent =
                 'Detection Running';
 
+
+            console.log(
+                'Detection started'
+            );
+
         }
     );
 
@@ -694,7 +856,9 @@ async function getInitialConfig() {
     try {
 
         const response =
-            await fetch('/api/config');
+            await fetch(
+                '/api/config'
+            );
 
 
         const defaultConfig =
@@ -756,6 +920,12 @@ async function getInitialConfig() {
             config.alertInterval / 1000;
 
 
+        console.log(
+            'Initial config:',
+            config
+        );
+
+
     } catch (error) {
 
         console.error(
@@ -783,10 +953,13 @@ document
         'click',
         async () => {
 
+
             try {
 
                 const response =
-                    await fetch('/api/config');
+                    await fetch(
+                        '/api/config'
+                    );
 
 
                 const defaultConfig =
@@ -840,7 +1013,7 @@ document
                 document.getElementById(
                     'alertInterval'
                 ).value =
-                    config.alertInterval / 1000;
+                    10;
 
 
                 localStorage.removeItem(
@@ -849,7 +1022,7 @@ document
 
 
                 console.log(
-                    'Reset to default configuration'
+                    'Configuration reset'
                 );
 
 
@@ -867,12 +1040,13 @@ document
 
 
 // ======================================================
-// ALERT ON/OFF BUTTON
+// ALERT ON / OFF
 // ======================================================
 
 toggleAlertBtn.addEventListener(
     'click',
     () => {
+
 
         alertsEnabled =
             !alertsEnabled;
@@ -885,8 +1059,16 @@ toggleAlertBtn.addEventListener(
 
         toggleAlertBtn.innerHTML =
             alertsEnabled
+
                 ? '<span class="alert-icon"></span> Alerts Enabled'
+
                 : '<span class="alert-icon"></span> Alerts Disabled';
+
+
+        console.log(
+            'Alerts:',
+            alertsEnabled
+        );
 
     }
 );
@@ -917,7 +1099,7 @@ function login() {
         )
 
         .then(
-            (userCredential) => {
+            () => {
 
                 document.getElementById(
                     'auth-message'
@@ -965,7 +1147,7 @@ function signup() {
         )
 
         .then(
-            (userCredential) => {
+            () => {
 
                 document.getElementById(
                     'auth-message'
