@@ -15,7 +15,6 @@ function loadConfig() {
     return null;
 }
 
-
 function saveConfigToStorage() {
     try {
         localStorage.setItem('postureConfig', JSON.stringify(config));
@@ -26,10 +25,12 @@ function saveConfigToStorage() {
 }
 
 
+// ======================================================
+// VARIABLES
+// ======================================================
+
 let badPostureStartTime = null;
 let lastAlertTime = null;
-
-const ALERT_THRESHOLD = 10000;
 
 const cameraOverlay = document.querySelector('.camera-overlay');
 
@@ -42,7 +43,8 @@ const toggleAlertBtn = document.getElementById('toggleAlert');
 // ALERT SOUND
 // ======================================================
 
-// ALERT SOUND
+// Make sure this file exists:
+// frontend/sounds/soft-alert.mp3
 
 const alertSound = new Audio('/sounds/soft-alert.mp3?v=5');
 
@@ -67,7 +69,9 @@ async function startWebcam() {
         video.srcObject = stream;
 
         video.onloadedmetadata = () => {
+
             cameraOverlay.classList.add('hidden');
+
         };
 
     } catch (error) {
@@ -75,6 +79,7 @@ async function startWebcam() {
         console.error('Error accessing webcam:', error);
 
         cameraOverlay.textContent = 'Error accessing camera';
+
     }
 }
 
@@ -134,13 +139,13 @@ async function sendFrame() {
 
         updateUI(data);
 
-
     } catch (error) {
 
         console.error(
             'Error sending frame:',
             error
         );
+
     }
 }
 
@@ -184,16 +189,20 @@ function updateUI(data) {
 
     statusElement.className =
         'status-message ' +
-        (data.is_good
-            ? 'good-posture'
-            : 'bad-posture');
+        (
+            data.is_good
+                ? 'good-posture'
+                : 'bad-posture'
+        );
 
 
     videoContainer.className =
         'video-container ' +
-        (data.is_good
-            ? 'good-posture-shadow'
-            : 'bad-posture-shadow');
+        (
+            data.is_good
+                ? 'good-posture-shadow'
+                : 'bad-posture-shadow'
+        );
 
 
     // ==================================================
@@ -203,21 +212,33 @@ function updateUI(data) {
     let angleText = 'Neck Angles: ';
 
 
-    if (data.angles.right !== undefined) {
+    if (
+        data.angles &&
+        data.angles.right !== undefined
+    ) {
 
         angleText +=
             `Right: ${data.angles.right.toFixed(2)}°`;
+
     }
 
 
-    if (data.angles.left !== undefined) {
+    if (
+        data.angles &&
+        data.angles.left !== undefined
+    ) {
 
-        if (data.angles.right !== undefined) {
+        if (
+            data.angles.right !== undefined
+        ) {
+
             angleText += ' | ';
+
         }
 
         angleText +=
             `Left: ${data.angles.left.toFixed(2)}°`;
+
     }
 
 
@@ -234,6 +255,7 @@ function updateUI(data) {
         drawPoseMarkers(
             data.landmarks
         );
+
     }
 
 
@@ -247,12 +269,16 @@ function updateUI(data) {
 
             badPostureStartTime =
                 Date.now();
+
         }
 
 
         const duration =
             Math.floor(
-                (Date.now() - badPostureStartTime) / 1000
+                (
+                    Date.now() -
+                    badPostureStartTime
+                ) / 1000
             );
 
 
@@ -270,13 +296,18 @@ function updateUI(data) {
         // ==================================================
 
         if (
+            config &&
+            config.alertInterval &&
             duration >=
             config.alertInterval / 1000
         ) {
 
             if (
                 !lastAlertTime ||
-                (Date.now() - lastAlertTime) >=
+                (
+                    Date.now() -
+                    lastAlertTime
+                ) >=
                 config.alertInterval
             ) {
 
@@ -284,9 +315,10 @@ function updateUI(data) {
 
                 lastAlertTime =
                     Date.now();
-            }
-        }
 
+            }
+
+        }
 
     } else {
 
@@ -297,6 +329,7 @@ function updateUI(data) {
         timerElement.classList.add(
             'hidden'
         );
+
     }
 }
 
@@ -308,22 +341,41 @@ function updateUI(data) {
 function playAlert() {
 
     if (!alertsEnabled) {
-        console.log("Alerts are disabled");
+
+        console.log(
+            'Alerts are disabled'
+        );
+
         return;
     }
 
-    console.log("Trying to play alert sound...");
+
+    console.log(
+        'Trying to play alert sound...'
+    );
+
 
     alertSound.currentTime = 0;
 
+
     alertSound.play()
         .then(() => {
-            console.log("Alert sound played successfully");
+
+            console.log(
+                'Alert sound played successfully'
+            );
+
         })
         .catch((error) => {
-            console.error("Alert sound error:", error);
+
+            console.error(
+                'Alert sound error:',
+                error
+            );
+
         });
 }
+
 
 // ======================================================
 // POSE MARKERS
@@ -375,7 +427,9 @@ function drawPoseMarkers(landmarks) {
                     '#00FF00';
 
                 ctx.fill();
+
             }
+
         }
     );
 
@@ -413,6 +467,7 @@ function drawConnections(
         [8, 12],
 
         [7, 11]
+
     ];
 
 
@@ -452,7 +507,9 @@ function drawConnections(
                 );
 
                 ctx.stroke();
+
             }
+
         }
     );
 }
@@ -591,14 +648,12 @@ document
                 'Starting...';
 
 
-            // Enable audio after user click
+            // Unlock audio after user clicks Start
             try {
 
-                await alertSound.play();
-
-                alertSound.pause();
-
                 alertSound.currentTime = 0;
+
+                await alertSound.play();
 
                 console.log(
                     'Alert sound enabled'
@@ -610,6 +665,7 @@ document
                     'Could not enable audio:',
                     error
                 );
+
             }
 
 
@@ -624,6 +680,7 @@ document
 
             button.textContent =
                 'Detection Running';
+
         }
     );
 
@@ -638,6 +695,7 @@ async function getInitialConfig() {
 
         const response =
             await fetch('/api/config');
+
 
         const defaultConfig =
             await response.json();
@@ -664,6 +722,7 @@ async function getInitialConfig() {
 
                 alertInterval:
                     10000
+
             };
 
 
@@ -703,6 +762,7 @@ async function getInitialConfig() {
             'Error fetching initial config:',
             error
         );
+
     }
 }
 
@@ -728,6 +788,7 @@ document
                 const response =
                     await fetch('/api/config');
 
+
                 const defaultConfig =
                     await response.json();
 
@@ -748,6 +809,7 @@ document
 
                     alertInterval:
                         10000
+
                 };
 
 
@@ -797,7 +859,9 @@ document
                     'Error resetting configuration:',
                     error
                 );
+
             }
+
         }
     );
 
@@ -821,10 +885,9 @@ toggleAlertBtn.addEventListener(
 
         toggleAlertBtn.innerHTML =
             alertsEnabled
-
                 ? '<span class="alert-icon"></span> Alerts Enabled'
-
                 : '<span class="alert-icon"></span> Alerts Disabled';
+
     }
 );
 
@@ -837,13 +900,13 @@ function login() {
 
     const email =
         document.getElementById(
-            "login-email"
+            'login-email'
         ).value;
 
 
     const password =
         document.getElementById(
-            "login-password"
+            'login-password'
         ).value;
 
 
@@ -857,9 +920,10 @@ function login() {
             (userCredential) => {
 
                 document.getElementById(
-                    "auth-message"
+                    'auth-message'
                 ).innerText =
-                    "Logged in!";
+                    'Logged in!';
+
             }
         )
 
@@ -867,9 +931,10 @@ function login() {
             (error) => {
 
                 document.getElementById(
-                    "auth-message"
+                    'auth-message'
                 ).innerText =
                     error.message;
+
             }
         );
 }
@@ -883,13 +948,13 @@ function signup() {
 
     const email =
         document.getElementById(
-            "signup-email"
+            'signup-email'
         ).value;
 
 
     const password =
         document.getElementById(
-            "signup-password"
+            'signup-password'
         ).value;
 
 
@@ -903,9 +968,10 @@ function signup() {
             (userCredential) => {
 
                 document.getElementById(
-                    "auth-message"
+                    'auth-message'
                 ).innerText =
-                    "Account created!";
+                    'Account created!';
+
             }
         )
 
@@ -913,9 +979,10 @@ function signup() {
             (error) => {
 
                 document.getElementById(
-                    "auth-message"
+                    'auth-message'
                 ).innerText =
                     error.message;
+
             }
         );
 }
